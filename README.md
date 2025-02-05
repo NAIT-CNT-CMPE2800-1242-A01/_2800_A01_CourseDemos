@@ -8,4 +8,6 @@
 | LINQyBits | Most of the LINQ junk from notes + DataGridView demo |
 | LINQ_Gpsdeploy | Practice LINQ grouping problems (deployment) |
 | LINQ_GpsSols | Practice LINQ grouping problems (solutions) |
+| DemoRegexDAC | Regex and data-aware control demo |
+| RegexDemoNamedGroups | Regex with named groups demo |
 
