@@ -37,5 +37,31 @@ namespace SocketClient
                 Console.WriteLine($"{nameof(UI_Connect_Btn_Click)} Connection could not be made: {ex.Message}");
             }
         }
+
+        private void Send_Btn_Click(object sender, EventArgs e)
+        {
+            string phrase = "Hello, World!";
+
+            byte[] bytes = Encoding.UTF8.GetBytes(phrase);
+
+            connectSocket.Send(bytes);
+        }
+
+        private void Soft_Disco_Btn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                connectSocket.Shutdown(SocketShutdown.Both);
+            }
+            catch (Exception ex)
+            {
+                // Class: Func. ex
+            }
+            finally
+            {
+                connectSocket.Close();
+
+            }
+        }
     }
 }

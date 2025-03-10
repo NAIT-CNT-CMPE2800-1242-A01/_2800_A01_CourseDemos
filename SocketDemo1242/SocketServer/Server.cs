@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace SocketServer
 {
@@ -16,6 +17,8 @@ namespace SocketServer
     {
         Socket listenerSocket = null;
         Socket connectedSocket = null;
+
+        Thread thread = null;
 
         public Server()
         {
@@ -42,11 +45,49 @@ namespace SocketServer
             {
                 connectedSocket = listenerSocket.EndAccept(result);
 
+                StartReceive();
+
                 Console.WriteLine($"{nameof(cbBeginAccept)}: Connection formed!");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"{nameof(cbBeginAccept)}: Try reconnecting... {ex.Message}");
+            }
+        }
+
+        private void StartReceive()
+        {
+            thread = new Thread(ThreadReceive);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        private void ThreadReceive()
+        {
+            while (true)
+            {
+                byte[] bytes = new byte[20000];
+
+                try
+                {
+                    int receivedBytes = connectedSocket.Receive(bytes);
+
+                    if (receivedBytes == 0)
+                    {
+                        // soft disco
+                        Invoke(new Action(() => Text = "Soft Disco!"));
+                        return;
+                    }
+
+                    string message = Encoding.UTF8.GetString(bytes, 0, receivedBytes);
+                    Invoke(new Action(() => Text = message));
+                }
+                catch (Exception ex)
+                {
+                    // hard disco
+                    Invoke(new Action(() => Text = $"Hard Disco! {ex.Message}"));
+                    return;
+                }
             }
         }
     }
